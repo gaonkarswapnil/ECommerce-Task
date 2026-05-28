@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
@@ -38,7 +37,7 @@ fun ImageCarousel(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(360.dp)
+            .height(340.dp)
             .background(Color.White),
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -49,10 +48,8 @@ fun ImageCarousel(
             SubcomposeAsyncImage(
                 model = images[page],
                 contentDescription = "Carousel image $page",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
                 loading = {
                     Box(
                         modifier = Modifier
@@ -77,26 +74,24 @@ fun ImageCarousel(
             )
         }
 
+        // Page indicator dots
         if (images.size > 1) {
             Row(
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(images.size) { index ->
-                    val dotColor = if (pagerState.currentPage == index) {
-                        Color.White
-                    } else {
-                        Color.White.copy(alpha = 0.5f)
-                    }
+                    val isSelected = pagerState.currentPage == index
                     Box(
                         modifier = Modifier
-                            .size(6.dp)
+                            .size(if (isSelected) 8.dp else 6.dp)
                             .clip(CircleShape)
-                            .background(dotColor)
+                            .background(
+                                if (isSelected) Color(0xFF1A1A1A)
+                                else Color(0xFFD4C5A9)
+                            )
                     )
                 }
             }

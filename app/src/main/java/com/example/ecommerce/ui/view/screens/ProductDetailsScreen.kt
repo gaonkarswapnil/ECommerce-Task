@@ -2,6 +2,9 @@ package com.example.ecommerce.ui.view.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +23,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.ecommerce.domain.model.OptionValue
@@ -74,22 +79,55 @@ fun ProductDetailsScreenContent(
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
 
+    // Derive title from loaded product, fallback to empty
+    val topBarTitle = when (uiState) {
+        is ProductUiState.Success -> uiState.product.brandName
+        else -> ""
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Product Details",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        text = topBarTitle,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 17.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
-                actions = {
+                navigationIcon = {
                     IconButton(onClick = { }) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
+                },
+                actions = {
+                    // Wishlist heart
+                    IconButton(onClick = onWishlistToggle) {
+                        Icon(
+                            imageVector = if (isWishlisted) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Wishlist",
+                            tint = if (isWishlisted) Color(0xFFE91E63)
+                            else MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    // Share
                     IconButton(onClick = { }) {
-                        Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "Cart")
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share"
+                        )
+                    }
+                    // Cart / Bag
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Cart"
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

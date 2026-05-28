@@ -1,14 +1,14 @@
 package com.example.ecommerce.ui.view.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import com.example.ecommerce.ui.theme.ECommerceTheme
 
 @Composable
@@ -27,28 +30,63 @@ fun QuantitySelector(
     onDecrement: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        shape = RoundedCornerShape(24.dp),
-        border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.5f)),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-        modifier = modifier
+    val buttonSize = 40.dp
+    val middleWidth = 48.dp
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+        // Decrement button — light gray
+        Box(
+            modifier = Modifier
+                .size(buttonSize)
+                .background(Color(0xFFE0E0E0), RoundedCornerShape(4.dp))
+                .clickable { onDecrement() },
+            contentAlignment = Alignment.Center
         ) {
-            IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
-                Text("-", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            }
+            Text(
+                text = "−",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF555555)
+            )
+        }
+
+        // Quantity display — bordered box
+        Box(
+            modifier = Modifier
+                .width(middleWidth)
+                .height(buttonSize)
+                .background(Color.White)
+                .then(
+                    Modifier.padding(horizontal = 1.dp) // thin side borders via background layering
+                ),
+            contentAlignment = Alignment.Center
+        ) {
             Text(
                 text = "$quantity",
-                modifier = Modifier.padding(horizontal = 12.dp),
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                color = Color.Black
             )
-            IconButton(onClick = onIncrement, modifier = Modifier.size(32.dp)) {
-                Text("+", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            }
+        }
+
+        // Increment button — black
+        Box(
+            modifier = Modifier
+                .size(buttonSize)
+                .background(Color.Black, RoundedCornerShape(4.dp))
+                .clickable { onIncrement() },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "+",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
         }
     }
 }
@@ -57,10 +95,12 @@ fun QuantitySelector(
 @Composable
 fun QuantitySelectorPreview() {
     ECommerceTheme {
-        QuantitySelector(
-            quantity = 1,
-            onIncrement = {},
-            onDecrement = {}
-        )
+        Box(modifier = Modifier.padding(16.dp)) {
+            QuantitySelector(
+                quantity = 1,
+                onIncrement = {},
+                onDecrement = {}
+            )
+        }
     }
 }
